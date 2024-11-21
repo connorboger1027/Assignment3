@@ -1,0 +1,5 @@
+from Assignment3 import Delay
+
+months = int(input("How many months of data do you require? "))
+
+test = Delay(months)
