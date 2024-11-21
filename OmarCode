@@ -1,0 +1,21 @@
+import pandas as pd
+
+class Delay:
+    
+    df_flight = pd.DataFrame()
+    
+    def __init__(self, months):
+        
+        if months == 3:
+            df1 = pd.read_csv('June24Delays.csv')
+            df2 = pd.read_csv('July24Delays.csv')
+            df3 = pd.read_csv('Aug24Delays.csv')
+            self.df_flight = pd.concat([df1,df2,df3])
+        elif months == 2:
+            df2 = pd.read_csv('July24Delays.csv')
+            df3 = pd.read_csv('Aug24Delays.csv')
+            self.df_flight = pd.concat([df2,df3])
+        else:
+            self.df_flight = df1
+            
+        print(self.df_flight.head())
