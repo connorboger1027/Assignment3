@@ -1,0 +1,111 @@
+import pandas as pd
+import matplotlib as plt
+
+class Delay:
+    def __init__(self, months):
+        # Initialize and load data based on months
+        if months == 3:
+            df1 = pd.read_csv('June24Delays.csv')
+            df2 = pd.read_csv('July24Delays.csv')
+            df3 = pd.read_csv('Aug24Delays.csv')
+            self.df_flight = pd.concat([df1, df2, df3])
+        elif months == 2:
+            df2 = pd.read_csv('July24Delays.csv')
+            df3 = pd.read_csv('Aug24Delays.csv')
+            self.df_flight = pd.concat([df2, df3])
+        else:
+            self.df_flight = pd.read_csv('Aug24Delays.csv')
+
+        # Initialize attributes
+        self.origin = ""
+        self.destination = ""
+        self.airline = ""
+
+    def __str__(self):
+        # Return string representation of the object
+        return f"Origin: {self.origin}, Destination: {self.destination}, Airline: {self.airline}, Number of Flights: {len(self.df_flight)}"
+
+    def set_origin(self, origin):
+        # Filter dataframe by origin
+        self.origin = origin
+        self.df_flight = self.df_flight[self.df_flight['Origin'] == origin]
+
+    def set_destination(self, destination):
+        # Filter dataframe by destination
+        self.destination = destination
+        self.df_flight = self.df_flight[self.df_flight['Destination'] == destination]
+
+    def set_airline(self, airline):
+        # Filter dataframe by airline
+        self.airline = airline
+        self.df_flight = self.df_flight[self.df_flight['Airline'] == airline]
+        
+    def print_stats(self):
+        if self.df_flight.empty:
+            print("No data available for the selected criteria.")
+            return
+
+    # Calculate statistics
+        stats = self.df_flight['Delay'].agg(['count', 'median', 'mean'])
+        over_15_min = (self.df_flight['Delay'] > 15).sum()
+        over_15_percentage = over_15_min / stats['count'] * 100
+
+    # Print details dynamically
+        print(f"Origin: {self.origin}")
+        print(f"Destination: {self.destination}")
+        print(f"Airline: {self.airline}")
+        print(f"Number of Flights: {int(stats['count'])}\n")
+        print(f"Of the {int(stats['count'])} flights,")
+        print(f"Mean delay: {stats['mean']:.1f}")
+        print(f"Median delay: {stats['median']:.1f}")
+        print(f"Of the flights, {over_15_percentage:.1f}% were over 15 minutes late.")
+
+
+    # def print_stats(self):
+    #     # Calculate statistics
+    #     stats = self.df_flight['Delay'].agg(['count', 'median', 'mean'])
+    #     over_15_min = (self.df_flight['Delay'] > 15).sum()
+    #     over_15_percentage = over_15_min / stats['count'] * 100
+
+    #     print(f"Number of Flights: {stats['count']}")
+    #     print(f"Median Delay: {stats['median']} minutes")
+    #     print(f"Mean Delay: {stats['mean']} minutes")
+    #     print(f"Percentage of Flights Over 15 Minutes Delay: {over_15_percentage:.2f}%")
+        
+        
+        
+    def plot_hist(self):
+        if self.df_flight.empty:
+            print("No data available to plot.")
+            return
+
+    # Calculate mean delay to decide the color
+        mean_delay = self.df_flight['Delay'].mean()
+        color = 'red' if mean_delay > 15 else 'green'
+
+    # Plot histogram with limited x-axis range
+        self.df_flight['Delay'].plot.hist(bins=75, density=True, color=color, alpha=0.7, edgecolor="black")
+
+    # Add a dynamic title with route and airline
+        plt.title(f"Delay distribution for {self.origin}-{self.destination} with {self.airline} flights")
+
+    # Adjust x-axis range to focus on relevant delays (similar to the example)
+        plt.xlim(-30, 90)
+
+        
+    # Set x and y labels
+        plt.xlabel("Minutes")
+        plt.ylabel("Density")
+
+    # Add gridlines for better readability
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+    # Display the plot
+        plt.show()
+
+    def list_options(self):
+        if self.origin == "":
+            print("Origin Airports: ", self.df_flight['Origin'].unique())
+            print("Airlines: ", self.df_flight['Airline'].unique())
+        else:
+            print("Destination Airports: ", self.df_flight['Destination'].unique())
