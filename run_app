@@ -1,0 +1,63 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Dec  9 15:28:35 2024
+
+@author: conno
+"""
+from delay_mod import Delay  # Import the Delay class
+
+def main():
+    # Ask the user how many months back to include in the data
+    while True:
+        try:
+            months_back = int(input("How many months back do you want to go (1, 2, or 3)? "))
+            if months_back in [1, 2, 3]:
+                break
+            else:
+                print("Please enter a number between 1 and 3.")
+        except ValueError:
+            print("Invalid input. Please enter a number between 1 and 3.")
+
+    # Initialize a Delay object
+    delay_tracker = Delay(months_back)
+
+    # Start the loop to interact with the user
+    while True:
+        print("\nPlease select an option:")
+        print("Type 'o' to set the Origin Airport")
+        print("Type 'd' to set the Destination Airport")
+        print("Type 'a' to set the Airline")
+        print("Type 'l' to list available options")
+        print("Press 'Enter' to exit and display results")
+
+        user_choice = input("Enter your choice: ").strip().lower()
+
+        if user_choice == "o":
+            # Set origin airport
+            origin = input("Enter origin airport (e.g., ATL, JFK, LAX): ").strip().upper()
+            delay_tracker.set_origin(origin)
+        elif user_choice == "d":
+            # Set destination airport
+            destination = input("Enter destination airport (e.g., ORD, DFW, SFO): ").strip().upper()
+            delay_tracker.set_destination(destination)
+        elif user_choice == "a":
+            # Set airline
+            airline = input("Enter airline (e.g., DL, AA, WN): ").strip().upper()
+            delay_tracker.set_airline(airline)
+        elif user_choice == "l":
+            # List available options
+            delay_tracker.list_options()
+        elif user_choice == "":
+            # Exit the loop and display results
+            print("\nFinal Details:")
+            print(delay_tracker)  # Print the current state of the Delay object
+            print("\nFlight Statistics:")
+            delay_tracker.print_stats()  # Display the calculated statistics
+            print("\nGenerating histogram...")
+            delay_tracker.plot_hist()  # Generate and display the histogram
+            break
+        else:
+            print("Invalid option. Please try again.")
+
+if __name__ == "__main__":
+    main()
